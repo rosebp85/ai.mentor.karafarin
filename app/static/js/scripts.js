@@ -13,16 +13,15 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // ارسال درخواست به سرور
-        fetch(fetch("http://127.0.0.1:5000/get_answer", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: new URLSearchParams({
-        message: question,
-    }),
-})
-
+        fetch("/get_answer", {
+            method: "POST", // ارسال درخواست با متد POST
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded", // نوع محتوای درخواست
+            },
+            body: new URLSearchParams({
+                message: question, // ارسال پارامتر message
+            }),
+        })
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("خطا در پاسخ سرور");
@@ -30,13 +29,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 return response.json();
             })
             .then((data) => {
+                // نمایش پاسخ
                 if (data.answer) {
                     document.getElementById("bot-answer").textContent = data.answer;
                     document.getElementById("answer-container").style.display = "block";
                 }
             })
             .catch((error) => {
-                console.error("Error:", error); // چاپ خطا
+                console.error("Error:", error); // چاپ خطا در کنسول
                 alert("مشکلی در ارسال درخواست رخ داده است.");
             });
     });

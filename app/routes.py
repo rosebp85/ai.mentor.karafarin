@@ -5,8 +5,6 @@ import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from sklearn.metrics.pairwise import cosine_similarity
 
-
-
 # بارگذاری داده‌های سوالات متداول از فایل JSON
 with open('data/faq.json', encoding='utf-8') as f:
     faq_data = json.load(f)
@@ -60,14 +58,9 @@ def get_response(user_id, user_message):
     user_memory[user_id]["history"].append({"bot": response})
     return response
 
-
-
-
-
 @app.route('/')
 def index():
     return render_template('index.html')
-
 
 @app.route('/get_answer', methods=['POST'])
 def get_answer():
@@ -75,8 +68,8 @@ def get_answer():
     user_message = request.form.get('message', '')
 
     if not user_message:
-        return "لطفاً سوال خود را وارد کنید."  # بازگرداندن متن ساده
+        return jsonify({"error": "لطفاً سوال خود را وارد کنید."}), 400
 
     response = get_response(user_id, user_message)
-    print(f"Response: {response}")  # چاپ پاسخ در کنسول برای بررسی
-    return response  # بازگرداندن پاسخ به‌صورت مستقیم
+    print(f"Response: {response}")
+    return jsonify({"answer": response}), 200

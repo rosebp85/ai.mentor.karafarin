@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("question-form");
 
     form.addEventListener("submit", function (event) {
-        event.preventDefault(); // جلوگیری از ارسال پیش‌فرض فرم
+        event.preventDefault(); // جلوگیری از ارسال فرم به روش سنتی
 
         const questionInput = document.getElementById("message");
         const question = questionInput.value.trim();
@@ -14,12 +14,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // ارسال درخواست به سرور
         fetch("/get_answer", {
-            method: "POST",
+            method: "POST", // اطمینان از ارسال متد POST
             headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
+                "Content-Type": "application/x-www-form-urlencoded", // نوع محتوای درخواست
             },
             body: new URLSearchParams({
-                message: question,
+                message: question, // ارسال پارامتر پیام
             }),
         })
             .then((response) => {
@@ -29,17 +29,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 return response.json();
             })
             .then((data) => {
-                // نمایش پاسخ
                 if (data.answer) {
-                    const answerContainer = document.getElementById("answer-container");
-                    const botAnswer = document.getElementById("bot-answer");
-
-                    botAnswer.textContent = data.answer;
-                    answerContainer.style.display = "block";
+                    document.getElementById("bot-answer").textContent = data.answer;
+                    document.getElementById("answer-container").style.display = "block";
                 }
             })
             .catch((error) => {
-                console.error("Error:", error);
+                console.error("Error:", error); // چاپ خطا
                 alert("مشکلی در ارسال درخواست رخ داده است.");
             });
     });

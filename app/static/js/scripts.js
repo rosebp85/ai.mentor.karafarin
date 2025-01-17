@@ -13,15 +13,16 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // ارسال درخواست به سرور
-        fetch("/get_answer", {
-            method: "POST", // اطمینان از ارسال متد POST
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded", // نوع محتوای درخواست
-            },
-            body: new URLSearchParams({
-                message: question, // ارسال پارامتر پیام
-            }),
-        })
+        fetch(fetch("http://127.0.0.1:5000/get_answer", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: new URLSearchParams({
+        message: question,
+    }),
+})
+
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("خطا در پاسخ سرور");

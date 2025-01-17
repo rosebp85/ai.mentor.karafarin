@@ -8,7 +8,7 @@ document.getElementById("question-form").addEventListener("submit", function (ev
     }
 
     fetch("/get_answer", {
-        method: "POST", // ارسال درخواست با متد POST
+        method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded",
         },

@@ -49,7 +49,6 @@ def get_response(user_message):
 @app.route('/')
 def index():
     return render_template('index.html')
-
 @app.route('/get_answer', methods=['POST'])
 def get_answer():
     try:
@@ -57,7 +56,6 @@ def get_answer():
         if not user_message:
             return jsonify({"error": "لطفاً سوال خود را وارد کنید."}), 400
 
-        # دریافت پاسخ
         response = get_response(user_message)
         return jsonify({"answer": response}), 200
     except Exception as e:

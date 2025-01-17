@@ -1,9 +1,10 @@
-from app import app
-from flask import render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify
 import json
 from sklearn.metrics.pairwise import cosine_similarity
 from transformers import AutoTokenizer, AutoModel
 import torch
+
+app = Flask(__name__)
 
 # بارگذاری داده‌های سوالات متداول از فایل JSON
 with open('data/faq.json', encoding='utf-8') as f:
@@ -58,3 +59,6 @@ def get_answer():
 
     response = get_response(user_message)
     return jsonify({"answer": response}), 200
+
+if __name__ == "__main__":
+    app.run(debug=True)

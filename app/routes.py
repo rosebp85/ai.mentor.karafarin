@@ -1,62 +1,49 @@
 from app import app
 from flask import render_template, request, jsonify
 import json
-import torch
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from sklearn.metrics.pairwise import cosine_similarity
+from transformers import AutoTokenizer, AutoModel
+import torch
 
 # بارگذاری داده‌های سوالات متداول از فایل JSON
 with open('data/faq.json', encoding='utf-8') as f:
     faq_data = json.load(f)
 
-# حافظه کوتاه‌مدت برای کاربران
-user_memory = {}
-
 # مدل NLP و توکنایزر
 MODEL_NAME = "sentence-transformers/paraphrase-MiniLM-L6-v2"
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME)
+model = AutoModel.from_pretrained(MODEL_NAME)
 
+# تابع تولید embedding برای سوال
 def embed_question(question):
-    """ایجاد نمایش عددی (embedding) برای سوال"""
     inputs = tokenizer(question, return_tensors="pt", padding=True, truncation=True)
     with torch.no_grad():
-        outputs = model(**inputs)
-    embeddings = outputs.logits.numpy()
+        embeddings = model(**inputs).last_hidden_state.mean(dim=1)
     return embeddings
 
-def get_response(user_id, user_message):
-    """مدیریت مکالمه کاربر و ارائه پاسخ مناسب"""
-    if user_id not in user_memory:
-        user_memory[user_id] = {"state": "waiting_for_question", "history": []}
+# تابع برای دریافت پاسخ با استفاده از کلیدواژه‌ها و تطابق معنایی
+def get_response(user_message):
+    question_embedding = embed_question(user_message)
+    best_match = None
+    best_score = -1
 
-    state = user_memory[user_id]["state"]
-    user_memory[user_id]["history"].append({"user": user_message})
+    for item in faq_data:
+        # محاسبه شباهت با کلیدواژه‌ها
+        if any(keyword in user_message for keyword in item.get("keywords", [])):
+            return item["answer"]
 
-    if state == "waiting_for_question":
-        question_embedding = embed_question(user_message)
-        best_match = None
-        best_score = -1
+        # محاسبه شباهت معنایی
+        faq_embedding = embed_question(item["question"])
+        score = cosine_similarity(question_embedding.numpy(), faq_embedding.numpy())[0][0]
+        if score > best_score:
+            best_score = score
+            best_match = item
 
-        for item in faq_data:
-            faq_embedding = embed_question(item["question"])
-            score = cosine_similarity(question_embedding, faq_embedding)[0][0]
-            if score > best_score:
-                best_score = score
-                best_match = item
-
-        if best_match and best_score > 0.7:
-            response = best_match["answer"]
-        else:
-            response = "متاسفم، نتوانستم پاسخ سوال شما را پیدا کنم."
-
-        user_memory[user_id]["state"] = "waiting_for_question"
+    # بازگرداندن پاسخ مناسب
+    if best_match and best_score > 0.7:
+        return best_match["answer"]
     else:
-        response = "متاسفم، متوجه درخواست شما نشدم."
-        user_memory[user_id]["state"] = "waiting_for_question"
-
-    user_memory[user_id]["history"].append({"bot": response})
-    return response
+        return "متأسفم، نتوانستم پاسخ سوال شما را پیدا کنم."
 
 @app.route('/')
 def index():
@@ -64,12 +51,10 @@ def index():
 
 @app.route('/get_answer', methods=['POST'])
 def get_answer():
-    user_id = request.form.get('user_id', 'unknown_user')
-    user_message = request.form.get('message', '')
+    user_message = request.form.get('message', '').strip()
 
     if not user_message:
         return jsonify({"error": "لطفاً سوال خود را وارد کنید."}), 400
 
-    response = get_response(user_id, user_message)
-    print(f"Response: {response}")
+    response = get_response(user_message)
     return jsonify({"answer": response}), 200

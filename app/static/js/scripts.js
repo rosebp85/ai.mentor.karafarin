@@ -29,7 +29,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 return response.json();
             })
             .then((data) => {
-                // نمایش پاسخ
                 if (data.answer) {
                     document.getElementById("bot-answer").textContent = data.answer;
                     document.getElementById("answer-container").style.display = "block";

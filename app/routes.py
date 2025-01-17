@@ -52,13 +52,14 @@ def index():
 
 @app.route('/get_answer', methods=['POST'])
 def get_answer():
-    user_message = request.form.get('message', '').strip()
+    try:
+        user_message = request.form.get('message', '').strip()
+        if not user_message:
+            return jsonify({"error": "لطفاً سوال خود را وارد کنید."}), 400
 
-    if not user_message:
-        return jsonify({"error": "لطفاً سوال خود را وارد کنید."}), 400
-
-    response = get_response(user_message)
-    return jsonify({"answer": response}), 200
-
-if __name__ == "__main__":
-    app.run(debug=True)
+        # دریافت پاسخ
+        response = get_response(user_message)
+        return jsonify({"answer": response}), 200
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"error": "مشکلی در پردازش درخواست رخ داده است."}), 500

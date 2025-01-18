@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منتور پاسخ‌دهی هوشمند بیمه</title>
+    
+    <!-- اضافه کردن favicon (اختیاری) -->
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+
+    <!-- لینک دادن به فایل CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- لینک دادن به فایل JS -->
+    <script src="{{ url_for('static', filename='js/scripts.js') }}" defer></script>
+</head>
+<body>
+    <h1>منتور پاسخ‌دهی هوشمند بیمه</h1>
+
+    <!-- فرم برای ارسال سوال -->
+    <form id="question-form">
+        <label for="message">سوال خود را وارد کنید:</label>
+        <input type="text" id="message" name="message" placeholder="سوال خود را اینجا بنویسید" required>
+        <button type="submit">ارسال</button>
+    </form>
+    
+    <div id="answer-container" style="display: none; margin-top: 20px;">
+        <strong>پاسخ:</strong> <span id="bot-answer"></span>
+    </div>
+</body>
+</html>

@@ -6,6 +6,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 import os
 from sentence_transformers import SentenceTransformer
 
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 
 app = Flask(__name__)  # تعریف اپلیکیشن Flask

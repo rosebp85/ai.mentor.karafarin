@@ -49,3 +49,12 @@ tensorflow
 tensorflow-estimator
 tensorflow-io-gcs-filesystem
 tensorflow_intel
+tensorflow
+tensorflow-estimator
+tensorflow-io-gcs-filesystem
+transformers
+tokenizers
+safetensors
+numpy
+scipy
+pandas

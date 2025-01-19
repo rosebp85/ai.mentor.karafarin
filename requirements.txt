@@ -4,6 +4,7 @@ typing-extensions
 tqdm
 sympy
 safetensors
+sentence_transformers
 regex
 pyyaml
 pillow
